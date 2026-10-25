@@ -219,10 +219,9 @@ install_via_bun() {
             exit 1
         }
     fi
-    ln -sf "$HOME/.bun/bin/omp" "$HOME/.bun/bin/vomp" 2>/dev/null || true
     echo ""
-    echo "✓ Installed omp & vomp via bun"
-    echo "Run 'vomp' or 'omp' to get started!"
+    echo "✓ Installed vomp via bun"
+    echo "Run 'vomp' to get started!"
 }
 
 # The string value of field "$1" in the one-line JSON on stdin (last
@@ -322,17 +321,16 @@ install_binary() {
         exit 1
     fi
     chmod +x "$DOWNLOAD_PATH"
-    mv -f "$DOWNLOAD_PATH" "${INSTALL_DIR}/omp"
-    ln -sf "${INSTALL_DIR}/omp" "${INSTALL_DIR}/vomp" 2>/dev/null || cp -f "${INSTALL_DIR}/omp" "${INSTALL_DIR}/vomp" 2>/dev/null || true
+    mv -f "$DOWNLOAD_PATH" "${INSTALL_DIR}/vomp"
 
     # Verify the freshly installed binary can actually start before reporting
     # success. Bun's musl-target binaries link libstdc++/libgcc dynamically,
     # which stock Alpine/musl systems do not ship, so the download succeeds while
     # the binary exits 127 with relocation errors. Never claim success for a
     # binary that cannot run.
-    if ! SMOKE_OUTPUT="$("${INSTALL_DIR}/omp" --version 2>&1)"; then
+    if ! SMOKE_OUTPUT="$("${INSTALL_DIR}/vomp" --version 2>&1)"; then
         echo ""
-        echo "✗ omp was downloaded to ${INSTALL_DIR}/omp but cannot start:"
+        echo "✗ vomp was downloaded to ${INSTALL_DIR}/vomp but cannot start:"
         echo "$SMOKE_OUTPUT" | sed 's/^/    /'
         if [ "$PLATFORM" = "linux-musl" ]; then
             echo ""

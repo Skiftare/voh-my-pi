@@ -279,11 +279,11 @@ function Install-ViaBun {
     }
 
     Write-Host ""
-    Write-Host "[OK] Installed omp via bun" -ForegroundColor Green
+    Write-Host "[OK] Installed vomp via bun" -ForegroundColor Green
 
     Configure-BashShell
 
-    Write-Host "Run 'vomp' or 'omp' to get started!"
+    Write-Host "Run 'vomp' to get started!"
 }
 
 function Install-Binary {
@@ -318,8 +318,8 @@ function Install-Binary {
     # Download next to the destination and move it into place only once the
     # checksum matches, so a bad download never replaces a working omp.
     Write-Host "Downloading $BinaryName..."
-    $OutPath = Join-Path $InstallDir "omp.exe"
-    $DownloadPath = Join-Path $InstallDir ".omp.download.exe"
+    $OutPath = Join-Path $InstallDir "vomp.exe"
+    $DownloadPath = Join-Path $InstallDir ".vomp.download.exe"
     try {
         Invoke-WebRequest -Uri $DownloadUrl -OutFile $DownloadPath -TimeoutSec 900
         $ActualSha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $DownloadPath).Hash.ToLowerInvariant()
@@ -327,14 +327,12 @@ function Install-Binary {
             throw "Checksum mismatch for ${BinaryName}: expected $ExpectedSha256, got $ActualSha256"
         }
         Move-Item -Force -LiteralPath $DownloadPath -Destination $OutPath
-        $VompPath = Join-Path $InstallDir "vomp.exe"
-        Copy-Item -Force -LiteralPath $OutPath -Destination $VompPath
     } finally {
         Remove-Item -Force -LiteralPath $DownloadPath -ErrorAction SilentlyContinue
     }
 
     Write-Host ""
-    Write-Host "[OK] Installed omp & vomp to $InstallDir" -ForegroundColor Green
+    Write-Host "[OK] Installed vomp to $OutPath" -ForegroundColor Green
     # Add to PATH if not already there
     $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
     $needsRestart = $UserPath -notlike "*$InstallDir*"

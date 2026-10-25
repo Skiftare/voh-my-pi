@@ -32,7 +32,7 @@
 
 ## Install & Quickstart
 
-The agent is available globally under both **`vomp`** and `omp` commands.
+The agent is available globally under the **`vomp`** command.
 
 ### 1. Cross-Platform via Git & Bun (Recommended: Windows, macOS, Linux)
 
