@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  Maintained & enhanced by <strong>skiftare</strong> (<a href="https://github.com/Skiftare/voh-my-pi">@Skiftare</a>) · Fork of <a href="https://github.com/can1357/oh-my-pi">oh-my-pi</a> & <a href="https://github.com/badlogic/pi-mono">Pi</a>
+  Built on <a href="https://github.com/badlogic/pi-mono">Pi</a> (by <a href="https://github.com/mariozechner">@mariozechner</a>) → Enhanced into <a href="https://github.com/can1357/oh-my-pi">oh-my-pi</a> (by <a href="https://stencil.so">Stencil Labs</a>) → Evolved into <strong>vomp</strong> by <a href="https://github.com/Skiftare/voh-my-pi">skiftare</a> (<a href="https://github.com/Skiftare">@Skiftare</a>)
 </p>
 
 **vomp** — агентный терминальный харнесс с изолированным двухканальным туннелем (Split-Networking) для работы с LLM через VLESS Reality, Hysteria 2, подписки и Xray-core, с полной защитой корпоративного Split-DNS (Confluence, Jira, GitLab, localhost) и встроенной сетевой телеметрией.
@@ -129,9 +129,12 @@ Edits that land on the first attempt. Reads that summarize files instead of dump
 
 [Read the full post ↗](https://blog.can.ac/2026/02/12/the-harness-problem/)
 
-## The Pi _you love_, with **batteries included**.
+## From Pi → to OMP → to vomp
 
-Originally built on [Mario Zechner](https://github.com/mariozechner)'s wonderful [Pi](https://github.com/badlogic/pi-mono), vomp adds everything you're missing.
+The lineage is simple:
+1. **[Pi](https://github.com/badlogic/pi-mono)** was created by [Mario Zechner](https://github.com/mariozechner) as an elegant terminal-first AI agent runtime.
+2. **[oh-my-pi (omp)](https://github.com/can1357/oh-my-pi)** was built on top of Pi by [Stencil Labs](https://stencil.so), adding in-process Rust tools, subagents, LSP, DAP debugging, and a rich coding-agent surface.
+3. **vomp** was created on top of omp by [skiftare](https://github.com/Skiftare), introducing user-space **Split-Networking** with an embedded VPN tunnel (VLESS Reality, Post-Quantum X25519MLKEM768, Hysteria 2, Xray-core, subscriptions pool) and full corporate Split-DNS protection so you can code with any model from anywhere without breaking local tools.
 
 ### 00 · Split-Networking LLM Tunnel (VLESS, Hy2, Subscriptions)
 
@@ -581,7 +584,7 @@ Full reference: [omp.sh/docs/sdk](https://omp.sh/docs/sdk).
 
 Open-source on GitHub: **[github.com/Skiftare/voh-my-pi](https://github.com/Skiftare/voh-my-pi)**.
 
-vomp is a fork of [Pi](https://github.com/badlogic/pi-mono) by [Mario Zechner](https://github.com/mariozechner), rewritten as a coding-first surface: sessions, subagents, slash commands, extensions — all TypeScript, all MIT, all on [GitHub](https://github.com/Skiftare/voh-my-pi). Shape it from config, hook it from outside, or read the source when you need to.
+vomp's lineage: originally created as [Pi](https://github.com/badlogic/pi-mono) by [Mario Zechner](https://github.com/mariozechner), expanded into [oh-my-pi](https://github.com/can1357/oh-my-pi) by [Stencil Labs](https://stencil.so), and evolved into **vomp** with split-networking VPN and standalone anti-censorship routing — all TypeScript & Rust, all MIT, all on [GitHub](https://github.com/Skiftare/voh-my-pi). Shape it from config, hook it from outside, or read the source when you need to.
 
 ### Primitives
 
@@ -597,7 +600,7 @@ Ask omp to write the piece you're missing, then `/reload-plugins`. Keep it local
 
 ## Philosophy
 
-omp is a fork of [pi-mono](https://github.com/badlogic/pi-mono) by [Mario Zechner](https://github.com/mariozechner), extended with a batteries-included coding workflow.
+`vomp` is built on `oh-my-pi` (which originated from `pi-mono` by [Mario Zechner](https://github.com/mariozechner)), extended with an isolated split-networking tunnel and anti-censorship core for unrestricted AI coding workflows.
 
 Key ideas:
 
