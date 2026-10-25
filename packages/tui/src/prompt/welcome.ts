@@ -1,4 +1,3 @@
-import { APP_NAME } from "@oh-my-pi/pi-utils/dirs";
 import type { TspSpan } from "@oh-my-pi/pi-wire";
 import { formatDoubleTap, formatKeyHint, formatKeyHints, type KeyName } from "../app-keybindings";
 import { editorKey } from "../chrome/keybinding-hints";
@@ -249,7 +248,7 @@ export class WelcomeComponent implements Component {
 						"image",
 						{
 							builtin: "omp",
-							alt: APP_NAME,
+							alt: "vomp",
 							w: 128,
 							role: "omp.welcome.logo",
 						},
@@ -259,7 +258,7 @@ export class WelcomeComponent implements Component {
 					keyed(
 						col(
 							[
-								art([span(APP_NAME, "strong")], "omp.welcome.wordmark"),
+								art([span("vomp", "strong")], "omp.welcome.wordmark"),
 								art([span(`v${this.version}`, "dim mono")], "omp.welcome.version"),
 							],
 							{ role: "omp.welcome.mark" },
@@ -418,7 +417,7 @@ const LOGO_WIDTH = Math.max(...PI_LOGO.map(row => row.length));
  * The `omp` wordmark in half-blocks, set beside {@link PI_LOGO} from its second
  * row: the `p` descends into the fourth, the version takes the fifth.
  */
-const WORDMARK = ["▄▀▀▄ █▀▄▀▄ █▀▀▄", "▀▄▄▀ █ █ █ █▄▄▀", "           █"];
+const WORDMARK = ["█  █ ▄▀▀▄ █▀▄▀▄ █▀▀▄", " ▀▄▀ ▀▄▄▀ █ █ █ █▄▄▀", "                █"];
 
 /** Columns of {@link WORDMARK}. */
 const WORDMARK_WIDTH = Math.max(...WORDMARK.map(row => row.length));

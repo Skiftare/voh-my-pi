@@ -29,7 +29,7 @@ if ($PSVersionTable.PSVersion -lt [version]"5.1") {
     throw "Windows PowerShell 5.1 or newer is required (found $($PSVersionTable.PSVersion)). Install PowerShell 7 from https://aka.ms/powershell and re-run the installer."
 }
 
-$Repo = "can1357/oh-my-pi"
+$Repo = "Skiftare/voh-my-pi"
 $Package = "@oh-my-pi/pi-coding-agent"
 $InstallDir = if ($env:PI_INSTALL_DIR) { $env:PI_INSTALL_DIR } else { "$env:LOCALAPPDATA\omp" }
 $BuildUrl = if ($env:PI_BUILD_URL) { $env:PI_BUILD_URL.TrimEnd("/") } else { "https://build.stencil.so" }
@@ -283,7 +283,7 @@ function Install-ViaBun {
 
     Configure-BashShell
 
-    Write-Host "Run 'omp' to get started!"
+    Write-Host "Run 'vomp' or 'omp' to get started!"
 }
 
 function Install-Binary {
@@ -327,13 +327,14 @@ function Install-Binary {
             throw "Checksum mismatch for ${BinaryName}: expected $ExpectedSha256, got $ActualSha256"
         }
         Move-Item -Force -LiteralPath $DownloadPath -Destination $OutPath
+        $VompPath = Join-Path $InstallDir "vomp.exe"
+        Copy-Item -Force -LiteralPath $OutPath -Destination $VompPath
     } finally {
         Remove-Item -Force -LiteralPath $DownloadPath -ErrorAction SilentlyContinue
     }
 
     Write-Host ""
-    Write-Host "[OK] Installed omp to $OutPath" -ForegroundColor Green
-
+    Write-Host "[OK] Installed omp & vomp to $InstallDir" -ForegroundColor Green
     # Add to PATH if not already there
     $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
     $needsRestart = $UserPath -notlike "*$InstallDir*"

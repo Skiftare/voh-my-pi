@@ -27,6 +27,7 @@ export const STATUS_LINE_SEGMENT_IDS = [
 	"collab",
 	"stream",
 	"vim",
+	"tunnel",
 ] as const;
 
 /** One identifier from the supported status-line segment catalog. */
@@ -37,7 +38,7 @@ export const CUSTOM_STATUS_LINE_DEFAULTS: {
 	readonly left: StatusLineSegmentId[];
 	readonly right: StatusLineSegmentId[];
 } = {
-	left: ["vim", "model", "mode", "path", "git", "pr"],
+	left: ["vim", "model", "mode", "tunnel", "path", "git", "pr"],
 	right: ["session_name", "token_total", "cost", "context_pct"],
 };
 

@@ -168,6 +168,8 @@ import type { Skill, SkillWarning } from "../extensibility/skills";
 import { expandSlashCommand, type FileSlashCommand, loadSlashCommands } from "../extensibility/slash-commands";
 import { normalizeToolEventInput, resolveToolEventInput } from "../extensibility/tool-event-input";
 import { GoalRuntime } from "../goals/runtime";
+import { getTunnelManager } from "../tunnel/coordinator";
+
 import type { GoalModeState, GoalTokenUsage } from "../goals/state";
 import type { HindsightSessionState } from "../hindsight/state";
 import { InternalUrlRouter, type LocalProtocolOptions } from "../internal-urls";
@@ -10687,6 +10689,27 @@ export class AgentSession implements SettingsScope {
 	 */
 	getAnthropicSlowModeLabel(): string | undefined {
 		return formatUsageLimitLabel(this.getUsageLimitState());
+	}
+
+	getTunnelStatus(): {
+		status: "idle" | "connecting" | "healthy" | "degraded" | "down";
+		activeUpstreamName?: string | null;
+		latencyMs?: number | null;
+		lastTtftMs?: number | null;
+		speedKbpsIn?: number;
+		speedKbpsOut?: number;
+	} | null {
+		const manager = getTunnelManager();
+		if (!manager) return null;
+		const m = manager.getMetrics();
+		return {
+			status: m.status,
+			activeUpstreamName: m.activeUpstreamName,
+			latencyMs: m.latencyMs,
+			lastTtftMs: m.lastTtftMs,
+			speedKbpsIn: m.speedKbpsIn,
+			speedKbpsOut: m.speedKbpsOut,
+		};
 	}
 
 	/**

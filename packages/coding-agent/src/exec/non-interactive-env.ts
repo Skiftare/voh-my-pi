@@ -118,18 +118,41 @@ export function buildNonInteractiveEnv(
 	// reaches the per-command env, which otherwise overrides the session value.
 	const base =
 		baseEnv.PI_BASH_NO_CI || baseEnv.CLAUDE_BASH_NO_CI ? withoutCI(NON_INTERACTIVE_ENV) : NON_INTERACTIVE_ENV;
-	if (platform !== "win32") {
-		return overrides ? { ...base, ...overrides } : base;
-	}
-
 	const env: Record<string, string> = { ...base };
-	for (const group of WINDOWS_UTF8_ENV_DEFAULT_GROUPS) {
-		if (hasEnvGroupValue(baseEnv, group, platform) || hasEnvGroupValue(overrides, group, platform)) {
-			continue;
-		}
-		for (const [key, value] of group) {
-			env[key] = value;
+	if (platform === "win32") {
+		for (const group of WINDOWS_UTF8_ENV_DEFAULT_GROUPS) {
+			if (hasEnvGroupValue(baseEnv, group, platform) || hasEnvGroupValue(overrides, group, platform)) {
+				continue;
+			}
+			for (const [key, value] of group) {
+				env[key] = value;
+			}
 		}
 	}
-	return overrides ? { ...env, ...overrides } : env;
+	if (overrides) {
+		Object.assign(env, overrides);
+	}
+	cleanseProxyEnv(env);
+	return env;
+}
+
+/** Standard proxy environment variables to strip for split-networking / host direct access. */
+export const PROXY_ENV_KEYS = [
+	"HTTP_PROXY",
+	"http_proxy",
+	"HTTPS_PROXY",
+	"https_proxy",
+	"ALL_PROXY",
+	"all_proxy",
+] as const;
+
+/**
+ * Removes all proxy-related environment variables from the given env object
+ * to ensure host-bound tools communicate directly without proxy interception.
+ */
+export function cleanseProxyEnv<T extends Record<string, string | undefined>>(env: T): T {
+	for (const key of PROXY_ENV_KEYS) {
+		delete env[key];
+	}
+	return env;
 }

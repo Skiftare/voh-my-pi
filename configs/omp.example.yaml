@@ -1,0 +1,58 @@
+# =============================================================================
+# Пример конфигурационного файла omp.yaml / ~/.omp/tunnel.yaml
+# Архитектура: Split-Networking (Двухканальная сеть)
+# =============================================================================
+
+# Настройки модели по умолчанию (опционально)
+model: "claude-3-7-sonnet"
+provider: "anthropic"
+
+# Изолированный LLM-туннель (ТОЛЬКО для общения с моделями)
+llm_tunnel:
+  enabled: true
+  
+  # Стратегия переключения узлов:
+  # - "failover": переключение по порядку списка при сбое
+  # - "lowest_latency": автоматический выбор узла с наименьшим пингом
+  strategy: "failover"
+  
+  # Интервал фонового canary-теста доступности канала
+  health_check_interval: 15s
+
+  # URL для замера доступности узла (canary probe)
+  canary_url: "https://1.1.1.1/cdn-cgi/trace"
+
+  # Явный путь к sing-box (если не установлен в PATH или ~/.omp/bin/sing-box)
+  # sing_box_path: "C:\\tools\\sing-box\\sing-box.exe"
+
+  # Пул узлов для авто-переключения и отказоустойчивости
+  upstreams:
+    # 1. VLESS Reality (gRPC / WebSocket / TCP)
+    - name: "vless-primary"
+      type: "vless"
+      url: "vless://11111111-2222-3333-4444-555555555555@my-vps.com:443?security=reality&sni=yahoo.com&fp=chrome&pbk=public_key_here&sid=short_id_here&type=grpc&serviceName=grpc-service#vless-primary"
+    
+    # 2. Hysteria 2 (UDP-based быстрый протокол)
+    - name: "hy2-backup"
+      type: "hysteria2"
+      url: "hy2://password_here@my-vps2.com:8443?sni=example.com#hy2-backup"
+
+    # 3. Корпоративный Gateway / HTTP(S) прокси с кастомными заголовками
+    - name: "corp-gateway"
+      type: "enterprise"
+      endpoint: "10.100.0.5:8080"
+      headers:
+        X-Corporate-DLP: "authorized"
+
+# Настройки рабочей среды агента (Host Network & Direct DNS)
+workspace:
+  # Вычищать прокси-переменные (HTTP_PROXY, HTTPS_PROXY, ALL_PROXY) из дочерних процессов
+  clean_env: true
+  
+  # Разрешённые инструменты агента (все исполняются напрямую в сети хоста)
+  allowed_tools:
+    - "read"
+    - "edit"
+    - "bash"
+    - "grep"
+    - "web"

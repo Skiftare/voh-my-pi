@@ -18,7 +18,10 @@ target/
 # Environment
 .env
 .venv
-
+omp.yaml
+omp.yml
+tunnel.yaml
+tunnel.yml
 # Editors
 .vscode/
 .zed/

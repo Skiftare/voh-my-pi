@@ -2618,7 +2618,9 @@ export class StatusLineComponent<TSession extends StatusLineSession = StatusLine
 			collab: this.#collabStatus,
 			stream: this.#streamStatus,
 			recording: this.#recording,
+			tunnel: typeof this.session.getTunnelStatus === "function" ? this.session.getTunnelStatus() : null,
 			usageStats,
+
 			contextPercent,
 			contextTokens,
 			contextWindow,

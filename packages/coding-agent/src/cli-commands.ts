@@ -299,6 +299,18 @@ export const commands: CommandEntry[] = [
 		aliases: ["q", "web-search"],
 		help: commandHelp.searchHelp,
 	},
+	{
+		name: "vpn",
+		load: () => import("./commands/vpn").then(m => m.default),
+		aliases: ["tunnel"],
+		help: commandHelp.vpnHelp,
+	},
+	{
+		name: "tunnel",
+		load: () => import("./commands/tunnel").then(m => m.default),
+		aliases: ["vpn"],
+		help: commandHelp.tunnelHelp,
+	},
 ];
 
 const SUBCOMMAND_NAMES = new Set<string>();

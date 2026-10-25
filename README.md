@@ -1,28 +1,26 @@
 <p align="center">
-  <img src="https://github.com/can1357/oh-my-pi/blob/main/assets/hero.png?raw=true" alt="omp">
+  <img src="https://github.com/Skiftare/voh-my-pi/blob/main/assets/hero.png?raw=true" alt="vomp">
 </p>
 
 <p align="center">
-  <strong>A coding agent with the IDE wired in.</strong>
-  <strong><a href="https://omp.sh">omp.sh</a></strong>
+  <strong>A coding agent with isolated split-networking & the IDE wired in.</strong>
 </p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent"><img src="https://img.shields.io/npm/v/@oh-my-pi/pi-coding-agent?style=flat&colorA=222222&colorB=CB3837" alt="npm version"></a>
-  <a href="https://github.com/can1357/oh-my-pi/blob/main/packages/coding-agent/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep-E05735?style=flat&colorA=222222" alt="Changelog"></a>
-  <a href="https://github.com/can1357/oh-my-pi/actions"><img src="https://img.shields.io/github/actions/workflow/status/can1357/oh-my-pi/ci.yml?style=flat&colorA=222222&colorB=3FB950" alt="CI"></a>
-  <a href="https://github.com/can1357/oh-my-pi/blob/main/LICENSE"><img src="https://img.shields.io/github/license/can1357/oh-my-pi?style=flat&colorA=222222&colorB=58A6FF" alt="License"></a>
-  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&colorA=222222&logo=typescript&logoColor=white" alt="TypeScript"></a>
+  <a href="https://github.com/Skiftare/voh-my-pi/blob/main/packages/coding-agent/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep-E05735?style=flat&colorA=222222" alt="Changelog"></a>
+  <a href="https://github.com/Skiftare/voh-my-pi/actions"><img src="https://img.shields.io/github/actions/workflow/status/Skiftare/voh-my-pi/ci.yml?style=flat&colorA=222222&colorB=3FB950" alt="CI"></a>
+  <a href="https://github.com/Skiftare/voh-my-pi/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Skiftare/voh-my-pi?style=flat&colorA=222222&colorB=58A6FF" alt="License"></a>
   <a href="https://www.rust-lang.org"><img src="https://img.shields.io/badge/Rust-DEA584?style=flat&colorA=222222&logo=rust&logoColor=white" alt="Rust"></a>
   <a href="https://bun.sh"><img src="https://img.shields.io/badge/runtime-Bun-f472b6?style=flat&colorA=222222" alt="Bun"></a>
   <a href="https://discord.gg/4NMW9cdXZa"><img src="https://img.shields.io/badge/Discord-5865F2?style=flat&colorA=222222&logo=discord&logoColor=white" alt="Discord"></a>
 </p>
 
 <p align="center">
-  Built by <a href="https://stencil.so">Stencil Labs</a> · Fork of <a href="https://github.com/badlogic/pi-mono">Pi</a> by <a href="https://github.com/mariozechner">@mariozechner</a>
+  Maintained & enhanced by <strong>skiftare</strong> (<a href="https://github.com/Skiftare/voh-my-pi">@Skiftare</a>) · Fork of <a href="https://github.com/can1357/oh-my-pi">oh-my-pi</a> & <a href="https://github.com/badlogic/pi-mono">Pi</a>
 </p>
 
-The most capable agent surface that ships. Continuously tuned by real-world use — complete out of the box, open all the way down.
+**vomp** — агентный терминальный харнесс с изолированным двухканальным туннелем (Split-Networking) для работы с LLM через VLESS Reality, Hysteria 2, подписки и Xray-core, с полной защитой корпоративного Split-DNS (Confluence, Jira, GitLab, localhost) и встроенной сетевой телеметрией.
 
 **60+** providers · **31** built-in tools · **14** lsp ops · **28** dap ops · **~80k** lines of Rust core.
 
@@ -32,45 +30,46 @@ The most capable agent surface that ships. Continuously tuned by real-world use 
 > while we evaluate how open contributions go. Depending on the results, the
 > vouch system may return.
 
-## Install
+## Install & Quickstart
 
-**macOS · Linux**
+The agent is available globally under both **`vomp`** and `omp` commands.
 
-```sh
-curl -fsSL https://omp.sh/install | sh
-```
+### 1. Cross-Platform via Git & Bun (Recommended: Windows, macOS, Linux)
 
-Without a usable bun (or with `--binary`), the install scripts fetch the prebuilt binary from `build.stencil.so` and check its SHA-256 before installing it. Pin a release with `curl -fsSL https://omp.sh/install | sh -s -- --binary --ref v<version>` (PowerShell: `-Binary -Ref v<version>`).
-
-> **Alpine / musl:** the prebuilt musl binary links `libstdc++`/`libgcc` dynamically, which stock Alpine does not ship. Install them first: `apk add libstdc++ libgcc`.
-
-**Homebrew**
+Requires [Bun](https://bun.sh) (≥ 1.3.14):
 
 ```sh
-brew install can1357/tap/omp
+# Clone and register globally
+git clone https://github.com/Skiftare/voh-my-pi.git
+cd voh-my-pi
+bun install
+bun link --cwd packages/coding-agent
 ```
 
-**Bun (recommended)**
+### 2. Standalone Installer Scripts
+
+**macOS · Linux**:
 
 ```sh
-bun install -g @oh-my-pi/pi-coding-agent
+curl -fsSL https://raw.githubusercontent.com/Skiftare/voh-my-pi/main/scripts/install.sh | sh
 ```
+
 
 **Nix**
 
 ```sh
 # Run without installing
-nix run github:can1357/oh-my-pi
+nix run github:Skiftare/voh-my-pi
 
 # Or install into the active profile (Nix < 2.30: `nix profile install`)
-nix profile add github:can1357/oh-my-pi
+nix profile add github:Skiftare/voh-my-pi
 ```
 
 Flake consumers can use `packages.<system>.omp`, `overlays.default`, `nixosModules.default`, or `homeManagerModules.default`. A Home Manager configuration can install OMP and own its settings declaratively:
 
 ```nix
 {
-  inputs.omp.url = "github:can1357/oh-my-pi";
+  inputs.omp.url = "github:Skiftare/voh-my-pi";
 
   # In your Home Manager module:
   imports = [ inputs.omp.homeManagerModules.default ];
@@ -81,16 +80,18 @@ Flake consumers can use `packages.<system>.omp`, `overlays.default`, `nixosModul
 }
 ```
 
-**Windows (PowerShell)**
+**Windows (PowerShell)**:
 
 ```powershell
-irm https://omp.sh/install.ps1 | iex
+irm https://raw.githubusercontent.com/Skiftare/voh-my-pi/main/scripts/install.ps1 | iex
 ```
+
+Once installed, simply run **`vomp`** in your terminal!
 
 **Pinned versions (mise)**
 
 ```sh
-mise use -g github:can1357/oh-my-pi
+mise use -g github:Skiftare/voh-my-pi
 ```
 
 macOS · Linux · Windows · bun ≥ 1.3.14
@@ -131,6 +132,20 @@ Edits that land on the first attempt. Reads that summarize files instead of dump
 ## The Pi _you love_, with **batteries included**.
 
 Originally built on [Mario Zechner](https://github.com/mariozechner)'s wonderful [Pi](https://github.com/badlogic/pi-mono), omp adds everything you're missing.
+
+### 00 · Split-Networking LLM Tunnel (VLESS, Hy2, Subscriptions)
+
+Corporate split-DNS and network restrictions often block LLM providers while generic VPNs break internal resources (Confluence, Jira, GitLab, localhost). `vomp` includes a built-in user-space **Split-Networking** tunnel:
+
+- **Channel 1 (LLM Uplink Tunnel)**: User-space proxy routing model requests (Anthropic, OpenAI, Gemini, etc.) through high-performance protocols:
+  - **VLESS Reality** (`vless://...`) with gRPC, TCP, or WebSocket transport.
+  - **Hysteria 2** (`hy2://...` or `hysteria2://...`).
+  - **Multi-Node Subscription URLs**: Plaintext or Base64 subscription URLs parsed into upstream connection pools with automatic health checking and failover.
+  - **Enterprise Proxies**: HTTP/HTTPS/SOCKS5 with optional bearer tokens or auth headers.
+- **Channel 2 (Host Network & Clean Environment)**: All agent tools (`bash`, `git`, `curl`, `web`) execute directly on the host network with proxy variables automatically stripped, preserving local Split-DNS and internal corporate services.
+- **Interactive TUI Configuration**:
+  - Run `/tunnel` (or `/vpn`) to open an interactive selector to switch nodes, toggle failover strategies (`failover` vs `lowest_latency`), add subscriptions, or trigger canary probes.
+  - Or configure settings via `/settings` (Providers -> LLM Split-Tunnel) or in `omp.yaml` / `tunnel.yaml`.
 
 ### 01 · Code execution w/ tool-calling
 
@@ -564,9 +579,9 @@ Full reference: [omp.sh/docs/sdk](https://omp.sh/docs/sdk).
 
 ## A harness worth keeping is one you _don't_ outgrow.
 
-Pick it up at **[omp.sh](https://omp.sh)**.
+Open-source on GitHub: **[github.com/Skiftare/voh-my-pi](https://github.com/Skiftare/voh-my-pi)**.
 
-omp is a fork of [Pi](https://github.com/badlogic/pi-mono) by [Mario Zechner](https://github.com/mariozechner), rewritten as a coding-first surface: sessions, subagents, slash commands, extensions — all TypeScript, all MIT, all on [GitHub](https://github.com/can1357/oh-my-pi). Shape it from config, hook it from outside, or read the source when you need to.
+vomp is a fork of [Pi](https://github.com/badlogic/pi-mono) by [Mario Zechner](https://github.com/mariozechner), rewritten as a coding-first surface: sessions, subagents, slash commands, extensions — all TypeScript, all MIT, all on [GitHub](https://github.com/Skiftare/voh-my-pi). Shape it from config, hook it from outside, or read the source when you need to.
 
 ### Primitives
 
@@ -705,10 +720,9 @@ component-local notices for attribution and additional terms.
 
 _made for terminals that stay open_
 
-- [omp.sh](https://omp.sh)
 - [Stencil Labs](https://stencil.so)
-- [GitHub](https://github.com/can1357/oh-my-pi)
-- [Changelog](https://github.com/can1357/oh-my-pi/blob/main/packages/coding-agent/CHANGELOG.md)
+- [GitHub](https://github.com/Skiftare/voh-my-pi)
+- [Changelog](https://github.com/Skiftare/voh-my-pi/blob/main/packages/coding-agent/CHANGELOG.md)
 - [npm](https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent)
 - [Discord](https://discord.gg/4NMW9cdXZa)
-- [MIT](https://github.com/can1357/oh-my-pi/blob/main/LICENSE)
+- [MIT](https://github.com/Skiftare/voh-my-pi/blob/main/LICENSE)

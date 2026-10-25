@@ -246,6 +246,8 @@ import { AgentOutputManager } from "./task/output-manager";
 import { wrapStreamFnWithProviderConcurrency } from "./task/provider-concurrency";
 import { sessionDelegationBias } from "./task/prompt-policy";
 import { isScoutSpawnable } from "./task/spawn-policy";
+import { initTunnel, stopTunnel, wrapStreamFnWithTunnelTelemetry, type UpstreamManager } from "./tunnel";
+
 import type { StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
 import {
 	AUTO_THINKING,
@@ -1769,6 +1771,18 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 	using startupCleanup = new DisposableStack();
 	if (restoreProviderToggles) startupCleanup.defer(restoreProviderToggles);
 	if (unbindSessionEffects) startupCleanup.defer(unbindSessionEffects);
+
+	let tunnelManager: UpstreamManager | null = null;
+	if (bindsProcessState) {
+		try {
+			tunnelManager = await initTunnel();
+			if (tunnelManager) {
+				startupCleanup.defer(() => void stopTunnel());
+			}
+		} catch (tunnelErr) {
+			logger.warn("Failed to initialize tunnel during session startup", { error: String(tunnelErr) });
+		}
+	}
 	// Snapshot this session's effective configured lane onto its invocation scope
 	// so startup sub-discovery sees the same complete policy that post-startup
 	// reloads and recursively spawned children consume.
@@ -4430,17 +4444,19 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 		// the session drives. Wrapped in a per-provider concurrency limiter so
 		// each LLM HTTP request — not the whole subagent lifecycle — holds the
 		// slot, preventing the nested-spawn deadlock from issue #3749.
-		const settingsBoundStreamFn = wrapStreamFnWithBlobUrlFallback(
-			wrapStreamFnWithProviderConcurrency(
-				settings,
-				createSettingsAwareStreamFn(settings, undefined, {
-					canAutoAccept: streamModel =>
-						anthropicSlowModeHasNoSiblingHeadroom(modelRegistry.authStorage, streamModel, session?.sessionId),
-					notify: (level, message) => session?.emitNotice(level, message, "anthropic-slow-mode"),
-					onLane: lane => session?.noteAnthropicSlowModeLane(lane),
-				}),
+		const settingsBoundStreamFn = wrapStreamFnWithTunnelTelemetry(
+			wrapStreamFnWithBlobUrlFallback(
+				wrapStreamFnWithProviderConcurrency(
+					settings,
+					createSettingsAwareStreamFn(settings, undefined, {
+						canAutoAccept: streamModel =>
+							anthropicSlowModeHasNoSiblingHeadroom(modelRegistry.authStorage, streamModel, session?.sessionId),
+						notify: (level, message) => session?.emitNotice(level, message, "anthropic-slow-mode"),
+						onLane: lane => session?.noteAnthropicSlowModeLane(lane),
+					}),
+				),
+				() => blobBroker.current,
 			),
-			() => blobBroker.current,
 		);
 		// Outbound credential-pattern redaction follows THIS session's `secrets.enabled` per
 		// request, not the process-wide switch (the newest effect holder's): concurrent ACP/SDK
@@ -4863,6 +4879,11 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			session.addDisposer(
 				() => void skillDescriptions.waitForPending().finally(() => ownedSkillDescriptionStore.close()),
 			);
+		}
+		if (tunnelManager) {
+			session.addDisposer(async () => {
+				await stopTunnel();
+			});
 		}
 		// A caller-supplied store belongs to the caller (the CLI keeps it in sync itself).
 		if (ownsAuthStorage) createAuthStorageSettingsSync(session, authStorage);

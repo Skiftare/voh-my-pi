@@ -107,14 +107,15 @@ describe("WelcomeComponent", () => {
 	it("sets the version under the wordmark while the lockup fits, else keeps the logo alone", () => {
 		const rows = (columns: number) => new WelcomeComponent("1.0.0").render(columns).map(row => Bun.stripANSI(row));
 
-		// The lockup needs 12 logo + 4 gap + 15 wordmark columns inside the 2-column margin.
-		const fits = rows(33);
-		const word = fits.find(row => row.includes("▄▀▀▄"));
+		// The lockup needs 12 logo + 4 gap + 20 wordmark columns inside the 2-column margin.
+		const fits = rows(38);
+		const word = fits.find(row => row.includes("█▀▄▀▄"));
 		const version = fits.find(row => row.includes("v1.0.0"));
 		expect(fits.some(row => row.includes("████████████"))).toBe(true);
-		expect(version?.indexOf("v1.0.0")).toBe(word?.indexOf("▄▀▀▄"));
+		const wordmarkStart = (word?.indexOf("▄▀▀▄") ?? 5) - 5;
+		expect(version?.indexOf("v1.0.0")).toBe(wordmarkStart);
 
-		const narrow = rows(32).join("\n");
+		const narrow = rows(37).join("\n");
 		expect(narrow).toContain("████████████");
 		expect(narrow).not.toContain("▄▀▀▄");
 		expect(narrow).not.toContain("v1.0.0");

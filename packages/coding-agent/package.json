@@ -12,7 +12,7 @@
 	],
 	"homepage": "https://omp.sh",
 	"bugs": {
-		"url": "https://github.com/can1357/oh-my-pi/issues"
+		"url": "https://github.com/Skiftare/voh-my-pi/issues"
 	},
 	"license": "MIT",
 	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
@@ -21,11 +21,12 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/can1357/oh-my-pi.git",
+		"url": "git+https://github.com/Skiftare/voh-my-pi.git",
 		"directory": "packages/coding-agent"
 	},
 	"bin": {
-		"omp": "src/cli.ts"
+		"omp": "src/cli.ts",
+		"vomp": "src/cli.ts"
 	},
 	"files": [
 		"src",

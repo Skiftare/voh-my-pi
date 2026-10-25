@@ -2,7 +2,11 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildNonInteractiveEnv, NON_INTERACTIVE_ENV } from "@oh-my-pi/pi-coding-agent/exec/non-interactive-env";
+import {
+	buildNonInteractiveEnv,
+	cleanseProxyEnv,
+	NON_INTERACTIVE_ENV,
+} from "@oh-my-pi/pi-coding-agent/exec/non-interactive-env";
 
 describe("buildNonInteractiveEnv", () => {
 	it("defaults Windows child-process encoding to UTF-8 when inherited env is unset", () => {
@@ -83,6 +87,24 @@ describe("buildNonInteractiveEnv", () => {
 
 	it("lets a per-command CI override win over the opt-out", () => {
 		expect(buildNonInteractiveEnv({ CI: "0" }, { PI_BASH_NO_CI: "1" }, "linux").CI).toBe("0");
+	});
+
+	it("cleanses all proxy environment variables for split networking", () => {
+		const env = {
+			PATH: "/usr/bin",
+			HTTP_PROXY: "http://127.0.0.1:1234",
+			http_proxy: "http://127.0.0.1:1234",
+			HTTPS_PROXY: "http://127.0.0.1:1234",
+			ALL_PROXY: "socks5://127.0.0.1:1080",
+			CUSTOM_VAR: "kept",
+		};
+		cleanseProxyEnv(env);
+		expect(env.PATH).toBe("/usr/bin");
+		expect(env.CUSTOM_VAR).toBe("kept");
+		expect(env).not.toHaveProperty("HTTP_PROXY");
+		expect(env).not.toHaveProperty("http_proxy");
+		expect(env).not.toHaveProperty("HTTPS_PROXY");
+		expect(env).not.toHaveProperty("ALL_PROXY");
 	});
 });
 

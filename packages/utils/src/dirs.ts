@@ -19,7 +19,7 @@ import { engines, version } from "../package.json" with { type: "json" };
 import { isEnoent, isEnotdir } from "./fs-error";
 
 /** App name (e.g. "omp") */
-export const APP_NAME: string = "omp";
+export const APP_NAME: string = "vomp";
 
 /** Public homepage that inference gateways (OpenRouter, Vercel AI Gateway) credit omp traffic to. */
 export const APP_URL: string = "https://omp.sh/";
@@ -34,7 +34,7 @@ export const MAIN_CONFIG_FILENAMES = ["config.yml", "config.yaml"] as const;
 export const VERSION: string = version;
 
 /** Default User-Agent header string (e.g. "omp/17.2.12") */
-export const USER_AGENT = `omp/${VERSION}`;
+export const USER_AGENT = `vomp/${VERSION}`;
 
 /** Minimum Bun version */
 export const MIN_BUN_VERSION: string = engines.bun.replace(/[^0-9.]/g, "");

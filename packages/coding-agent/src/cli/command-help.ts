@@ -149,6 +149,13 @@ export const skillHelp = {
 } satisfies CommandMetadata;
 
 export const sshHelp = { description: "Manage SSH host configurations" } satisfies CommandMetadata;
+export const vpnHelp = {
+	description: "Manage LLM split-networking VPN tunnel (VLESS, Hysteria2, subscriptions)",
+} satisfies CommandMetadata;
+
+export const tunnelHelp = {
+	description: "Manage LLM split-networking VPN tunnel (VLESS, Hysteria2, subscriptions)",
+} satisfies CommandMetadata;
 
 export const statsHelp = { description: "View usage statistics" } satisfies CommandMetadata;
 

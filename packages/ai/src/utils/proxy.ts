@@ -121,15 +121,65 @@ export function shouldBypassProxy(urlObj: URL): boolean {
 
 const proxyCache = new Map<string, string | undefined>();
 
+let activeTunnelProxyUrl: string | null = null;
+let globalTunnelFetchInstalled = false;
+let originalGlobalFetch: typeof globalThis.fetch = globalThis.fetch;
+
+function ensureGlobalTunnelFetchInstalled(): void {
+	if (globalTunnelFetchInstalled) return;
+	globalTunnelFetchInstalled = true;
+	originalGlobalFetch = globalThis.fetch;
+
+	const dynamicFetch = (input: string | URL | Request, init?: RequestInit): Promise<Response> => {
+		const tunnelProxy = activeTunnelProxyUrl;
+		if (tunnelProxy) {
+			const proxiedInit = withProxyInit(input, init, tunnelProxy);
+			return originalGlobalFetch(input, proxiedInit);
+		}
+		return originalGlobalFetch(input, init);
+	};
+
+	if (originalGlobalFetch.preconnect) {
+		dynamicFetch.preconnect = originalGlobalFetch.preconnect;
+	}
+	globalThis.fetch = dynamicFetch as typeof globalThis.fetch;
+}
+
+/**
+ * Configures an active LLM tunnel proxy URL (e.g. from the embedded sing-box runner).
+ * When set, LLM provider requests automatically route through this tunnel unless
+ * overridden by an explicit provider-specific PI_PROXY_<PROVIDER> env variable.
+ */
+export function setLlmTunnelProxy(proxyUrl: string | null): void {
+	activeTunnelProxyUrl = proxyUrl;
+	proxyCache.clear();
+	if (proxyUrl) {
+		ensureGlobalTunnelFetchInstalled();
+	}
+}
+
+/**
+ * Returns the currently active LLM tunnel proxy URL, or null if none is configured.
+ */
+export function getLlmTunnelProxy(): string | null {
+	return activeTunnelProxyUrl;
+}
+
 /** Test seam: clears the provider proxy cache. */
 export function __resetProxyCache(): void {
+	activeTunnelProxyUrl = null;
 	proxyCache.clear();
+	if (globalTunnelFetchInstalled) {
+		globalThis.fetch = originalGlobalFetch;
+		globalTunnelFetchInstalled = false;
+	}
 }
 
 /**
  * Normalizes provider id (e.g. github-copilot -> PI_PROXY_GITHUB_COPILOT) and looks it up.
- * If not found, falls back to PI_PROXY. Results are memoized because env values are static
- * for the lifetime of the process and this function is called for every outgoing request.
+ * If not found, falls back to the active LLM tunnel proxy, then PI_PROXY. Results are
+ * memoized because env values are static for the lifetime of the process and this
+ * function is called for every outgoing request.
  */
 export function getProxyForProvider(provider: string): string | undefined {
 	if (proxyCache.has(provider)) {
@@ -138,14 +188,14 @@ export function getProxyForProvider(provider: string): string | undefined {
 
 	const normalized = provider.toUpperCase().replace(/[^A-Z0-9]/g, "_");
 	const envKey = `PI_PROXY_${normalized}`;
-	const value = Bun.env[envKey] || Bun.env.PI_PROXY;
+	const value = Bun.env[envKey] || activeTunnelProxyUrl || Bun.env.PI_PROXY;
 	proxyCache.set(provider, value);
 	// Once per provider per process: a silently unproxied provider request is
 	// otherwise indistinguishable from a proxied one until the region block
 	// answers 403.
 	logger.debug("provider proxy resolved", {
 		provider,
-		source: Bun.env[envKey] ? envKey : value ? "PI_PROXY" : "none",
+		source: Bun.env[envKey] ? envKey : activeTunnelProxyUrl ? "LLM_TUNNEL" : value ? "PI_PROXY" : "none",
 		proxy: value ? proxyLogTarget(value) : undefined,
 	});
 	return value;

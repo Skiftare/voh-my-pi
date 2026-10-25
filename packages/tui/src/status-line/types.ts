@@ -127,6 +127,14 @@ export interface SegmentContext {
 	stream: { viewers: number } | null;
 	/** A `/record` capture of this screen is running. */
 	recording: boolean;
+	tunnel?: {
+		status: "idle" | "connecting" | "healthy" | "degraded" | "down";
+		activeUpstreamName?: string | null;
+		latencyMs?: number | null;
+		lastTtftMs?: number | null;
+		speedKbpsIn?: number;
+		speedKbpsOut?: number;
+	} | null;
 	// Cached values for performance (computed once per render)
 	usageStats: {
 		input: number;

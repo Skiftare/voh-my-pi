@@ -15,7 +15,7 @@ set -e
 # Prebuilt binaries come from the build service (PI_BUILD_URL, default
 # https://build.stencil.so) and are checked against its sha256 before install.
 
-REPO="can1357/oh-my-pi"
+REPO="Skiftare/voh-my-pi"
 PACKAGE="@oh-my-pi/pi-coding-agent"
 INSTALL_DIR="${PI_INSTALL_DIR:-$HOME/.local/bin}"
 BUILD_URL="${PI_BUILD_URL:-https://build.stencil.so}"
@@ -219,9 +219,10 @@ install_via_bun() {
             exit 1
         }
     fi
+    ln -sf "$HOME/.bun/bin/omp" "$HOME/.bun/bin/vomp" 2>/dev/null || true
     echo ""
-    echo "✓ Installed omp via bun"
-    echo "Run 'omp' to get started!"
+    echo "✓ Installed omp & vomp via bun"
+    echo "Run 'vomp' or 'omp' to get started!"
 }
 
 # The string value of field "$1" in the one-line JSON on stdin (last
@@ -322,6 +323,7 @@ install_binary() {
     fi
     chmod +x "$DOWNLOAD_PATH"
     mv -f "$DOWNLOAD_PATH" "${INSTALL_DIR}/omp"
+    ln -sf "${INSTALL_DIR}/omp" "${INSTALL_DIR}/vomp" 2>/dev/null || cp -f "${INSTALL_DIR}/omp" "${INSTALL_DIR}/vomp" 2>/dev/null || true
 
     # Verify the freshly installed binary can actually start before reporting
     # success. Bun's musl-target binaries link libstdc++/libgcc dynamically,

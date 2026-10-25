@@ -66,6 +66,14 @@ export interface StatusLineSession {
 	getAdvisorStatusOverview?(): { configured: boolean; advisors: readonly { status: string; yielded: boolean }[] };
 	getAdvisorCost?(): number;
 	isAdvisorUsingSubscription?(): boolean;
+	getTunnelStatus?(): {
+		status: "idle" | "connecting" | "healthy" | "degraded" | "down";
+		activeUpstreamName?: string | null;
+		latencyMs?: number | null;
+		lastTtftMs?: number | null;
+		speedKbpsIn?: number;
+		speedKbpsOut?: number;
+	} | null;
 }
 
 export interface FooterSession {

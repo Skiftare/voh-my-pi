@@ -1294,6 +1294,57 @@ const usageSegment: StatusLineSegment = {
 	},
 };
 
+const tunnelSegment: StatusLineSegment = {
+	id: "tunnel",
+	render(ctx) {
+		const t = ctx.tunnel;
+		if (!t || t.status === "idle") {
+			return { content: "", visible: false };
+		}
+
+		let statusColor: ThemeColor = "dim";
+		let icon = "●";
+		if (t.status === "healthy") {
+			statusColor = "success";
+		} else if (t.status === "degraded" || t.status === "connecting") {
+			statusColor = "warning";
+			icon = "◐";
+		} else if (t.status === "down") {
+			statusColor = "error";
+			icon = "○";
+		}
+
+		const rawName = t.activeUpstreamName ?? "VPN";
+		const cleanName = rawName.split("|")[0] ?? "VPN";
+		const parts: string[] = [theme.fg(statusColor, `${icon} ${cleanName}`)];
+		if (t.latencyMs !== null && t.latencyMs !== undefined) {
+			parts.push(theme.fg("dim", `${t.latencyMs}ms`));
+		}
+
+		return {
+			content: parts.join(" "),
+			visible: true,
+		};
+	},
+	describe(ctx) {
+		const t = ctx.tunnel;
+		if (!t || t.status === "idle") return null;
+
+		let tone: TspTone = "accent";
+		if (t.status === "healthy") tone = "success";
+		else if (t.status === "degraded" || t.status === "connecting") tone = "warning";
+		else if (t.status === "down") tone = "error";
+
+		const rawName = t.activeUpstreamName ?? "VPN";
+		const cleanName = rawName.split("|")[0] ?? "VPN";
+		const spans: TspSpan[] = [span(`🌐 ${cleanName}`, "strong")];
+		if (t.latencyMs !== null && t.latencyMs !== undefined) {
+			spans.push(span(` ${t.latencyMs}ms`, "dim"));
+		}
+		return segView(spans, undefined, tone);
+	},
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
 // Segment Registry
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1326,6 +1377,7 @@ export const SEGMENTS: Record<StatusLineSegmentId, StatusLineSegment> = {
 	collab: collabSegment,
 	stream: streamSegment,
 	vim: vimSegment,
+	tunnel: tunnelSegment,
 };
 
 export function renderSegment(id: StatusLineSegmentId, ctx: SegmentContext): RenderedSegment {

@@ -12,6 +12,7 @@ import {
 	getProxyForUrl,
 	installGlobalProxyFetch,
 	isLocalOrMetadataHost,
+	setLlmTunnelProxy,
 	shouldBypassProxy,
 	wrapFetchForProxy,
 } from "@oh-my-pi/pi-ai/utils/proxy";
@@ -146,6 +147,19 @@ describe("getProxyForProvider", () => {
 		Bun.env.PI_PROXY = "http://fallback:1";
 		Bun.env.PI_PROXY_PREC_PROV = PROXY;
 		expect(getProxyForProvider("prec-prov")).toBe(PROXY);
+	});
+
+	it("routes through setLlmTunnelProxy when configured", () => {
+		setLlmTunnelProxy("http://127.0.0.1:30000");
+		expect(getProxyForProvider("anthropic")).toBe("http://127.0.0.1:30000");
+		expect(getProxyForProvider("openai")).toBe("http://127.0.0.1:30000");
+
+		// Provider-specific explicit env override still takes precedence
+		Bun.env.PI_PROXY_ANTHROPIC = "http://127.0.0.1:30001";
+		__resetProxyCache();
+		setLlmTunnelProxy("http://127.0.0.1:30000");
+		expect(getProxyForProvider("anthropic")).toBe("http://127.0.0.1:30001");
+		expect(getProxyForProvider("openai")).toBe("http://127.0.0.1:30000");
 	});
 
 	it("returns undefined when neither var is set", () => {
